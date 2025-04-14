@@ -1,0 +1,158 @@
+loadstring([[
+-- Blox Fruits Complete Mobile-Compatible Script
+
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local humanoid = char:WaitForChild("Humanoid")
+local rootPart = char:WaitForChild("HumanoidRootPart")
+local camera = game.Workspace.CurrentCamera
+local tweenService = game:GetService("TweenService")
+local teleportService = game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
+
+local autoFarm = false
+local autoQuest = false
+local autoStats = false
+local autoCombat = false
+local fruitSpawnAlert = false
+local teleportToIslands = false
+
+-- Functions for Auto Farm
+local function farmNPCs()
+    if autoFarm then
+        -- Logic to find nearest NPC and attack it
+        -- Can be adjusted to different NPCs
+        local targetNPC = game.Workspace:FindFirstChild("TargetNPCName") -- Replace with actual NPC name
+        if targetNPC then
+            humanoid:MoveTo(targetNPC.Position)
+            -- Add combat actions here
+        end
+    end
+end
+
+-- Functions for Auto Quest
+local function completeQuest()
+    if autoQuest then
+        local quest = game.Workspace:FindFirstChild("QuestLocation") -- Change to actual quest
+        if quest then
+            -- Automatically move to the quest NPC and complete it
+            humanoid:MoveTo(quest.Position)
+        end
+    end
+end
+
+-- Functions for Auto Stats
+local function autoStatsFunc()
+    if autoStats then
+        -- Automatically distribute stats
+        local stats = player:FindFirstChild("Stats")
+        if stats then
+            -- Example: Assign 1 point to strength
+            stats.Strength.Value = stats.Strength.Value + 1
+        end
+    end
+end
+
+-- Fruit Spawn Alert
+local function fruitSpawnAlertFunc()
+    if fruitSpawnAlert then
+        local fruits = game.Workspace:FindFirstChild("Fruits")
+        if fruits then
+            for _, fruit in pairs(fruits:GetChildren()) do
+                if fruit:IsA("Model") and fruit:FindFirstChild("FruitName") then
+                    -- Alert when fruit appears
+                    print("Fruit Spawned: " .. fruit.FruitName.Value)
+                    -- Optionally, teleport to fruit
+                    humanoid:MoveTo(fruit.Position)
+                end
+            end
+        end
+    end
+end
+
+-- Combat Assist (locks onto and fights NPCs)
+local function combatAssist()
+    if autoCombat then
+        local targetNPC = game.Workspace:FindFirstChild("TargetNPCName") -- Replace with actual NPC name
+        if targetNPC then
+            humanoid:MoveTo(targetNPC.Position)
+            -- Add combat actions here
+        end
+    end
+end
+
+-- Teleport to Islands
+local function teleportToIsland(islandName)
+    if teleportToIslands then
+        local island = game.Workspace:FindFirstChild(islandName)
+        if island then
+            humanoid:MoveTo(island.Position)
+        end
+    end
+end
+
+-- Main Loop (Check for all enabled features)
+game:GetService("RunService").Heartbeat:Connect(function()
+    if autoFarm then
+        farmNPCs()
+    end
+    if autoQuest then
+        completeQuest()
+    end
+    if autoStats then
+        autoStatsFunc()
+    end
+    if fruitSpawnAlert then
+        fruitSpawnAlertFunc()
+    end
+    if autoCombat then
+        combatAssist()
+    end
+end)
+
+-- GUI for controls (Add buttons for toggling each feature)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = false
+
+local function createMobileButton(position, text, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0, 100, 0, 50)
+    button.Position = position
+    button.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+    button.Text = text
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.TextScaled = true
+    button.Font = Enum.Font.SourceSansBold
+    button.Parent = screenGui
+    button.Active = true
+    button.Draggable = true
+    button.TouchTap:Connect(callback)  -- Mobile compatible input
+    return button
+end
+
+-- Create buttons for mobile GUI
+createMobileButton(UDim2.new(0, 0, 0, 100), "Toggle AutoFarm", function()
+    autoFarm = not autoFarm
+end)
+
+createMobileButton(UDim2.new(0, 0, 0, 150), "Toggle AutoQuest", function()
+    autoQuest = not autoQuest
+end)
+
+createMobileButton(UDim2.new(0, 0, 0, 200), "Toggle AutoStats", function()
+    autoStats = not autoStats
+end)
+
+createMobileButton(UDim2.new(0, 0, 0, 250), "Toggle AutoCombat", function()
+    autoCombat = not autoCombat
+end)
+
+createMobileButton(UDim2.new(0, 0, 0, 300), "Toggle Fruit Alert", function()
+    fruitSpawnAlert = not fruitSpawnAlert
+end)
+
+createMobileButton(UDim2.new(0, 0, 0, 350), "Toggle Teleport", function()
+    teleportToIslands = not teleportToIslands
+end)
+
+]])()
